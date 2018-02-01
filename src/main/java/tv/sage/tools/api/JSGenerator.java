@@ -44,36 +44,36 @@ public abstract class JSGenerator
       w.printf("  if (typeof %s.%s !== 'undefined') return new Promise(function(resolve, reject) {\n", type,m.getSerializedField());
       w.printf("     resolve(%s.%s);\n", type, m.getSerializedField());
       w.printf("  });\n");
-      w.printf("  return this.sageAPI.invoke(\"%s\", {\n", m.getName());
+      w.printf("  return this.sageAPI.invoke(\"%s\", [\n", m.getName());
       int i=0;
       for (APIType t : m.getParameters())
       {
         if (i>0) w.println(",");
         if (t.isSageObject())
         {
-          w.printf("'%s':%s.ID\n", t.getName(), t.getName());
+          w.printf("%s.ID\n", t.getName());
         } else {
-          w.printf("'%s':%s\n", t.getName(), t.getName());
+          w.printf("%s\n", t.getName());
         }
         i++;
       }
-      w.printf("});\n");
+      w.printf("]);\n");
     } else {
       // service API
-      w.printf("  return this.sageAPI.invoke(\"%s\", {\n", m.getName());
+      w.printf("  return this.sageAPI.invoke(\"%s\", [\n", m.getName());
       int i=0;
       for (APIType t : m.getParameters())
       {
         if (i>0) w.println(",");
         if (t.isSageObject())
         {
-          w.printf("'%s':%s.ID\n", t.getName(), t.getName());
+          w.printf("%s.ID\n", t.getName());
         } else {
-          w.printf("'%s':%s\n", t.getName(), t.getName());
+          w.printf("%s\n", t.getName());
         }
         i++;
       }
-      w.printf("});\n");
+      w.printf("]);\n");
     }
   }
 

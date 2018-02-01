@@ -50,30 +50,28 @@ test {
 	useTestNG()
 }
 
-def File getRootDir() {
+File getRootDir() {
 	return project.rootDir;
 }
 
-def File getRootBuildOutput() {
-	def file = new File('build')
-	if (file.exists()) {
-		return file.getAbsoluteFile()
-	}
+File getRootBuildOutput() {
+	def file = new File(getRootDir(), 'build')
+	return file.getAbsoluteFile()
 }
 
-def File getGenOutput() {
+File getGenOutput() {
 	return new File(getRootBuildOutput(), "generated").getAbsoluteFile();
 }
 
-def File getTempDocsAPIDir() {
+File getTempDocsAPIDir() {
 	return new File(getRootBuildOutput(),'tempdocs/sage/api/').getAbsoluteFile();
 }
 
-def File getAPIJson() {
+File getAPIJson() {
 	return new File(getGenOutput(), "resources/sage/api/api.json").getAbsoluteFile();
 }
 
-def File getSageSources() {
+File getSageSources() {
 	File s = new File(getRootDir(), "../sagetv/")
 	if (s.exists()) return s;
 	if (System.getProperty("sagetv.dir") == null) {
@@ -142,17 +140,7 @@ task(genSwaggerUI, dependsOn: genAPIAST, type:JavaExec) {
 	args getAPIJson(), new File((File)getGenOutput(), 'openapi/sagetv-api.json')
 }
 
-/**
- java Module Generator xml outputdir
- */
-task(genModule, type:JavaExec) {
-    description 'Generate Web Module'
-    main = "tv.sage.tools.web.AppGeneratorNG"
-    classpath = sourceSets.main.runtimeClasspath
-    args new File((File)getRootDir(), 'web/src/app.xml'), new File((File)getRootDir(), 'web/'), 'mdl'
-}
-
-task (all, dependsOn: ['genJsonSerializers', 'genRequireJSAPI']) {
+task (all, dependsOn: ['genES6API', 'genRequireJSAPI']) {
 }
 
 all.finalizedBy(genSwaggerUI)
