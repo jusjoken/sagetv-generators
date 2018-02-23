@@ -143,6 +143,47 @@ task(genSwaggerUI, dependsOn: genAPIAST, type:JavaExec) {
 task (all, dependsOn: ['genES6API', 'genRequireJSAPI']) {
 }
 
+task(syncAll) {
+	doLast {
+		println "Updating js-api"
+		copy {
+			from ("build/generated/es6/")
+			into ("../sagetv-js-api/api/")
+			eachFile {println it.file}
+		}
+		println ""
+
+		println "Updating sagex swagger definition"
+		copy {
+			from ("build/generated/openapi/")
+			into ("../sagetv-sagex-api/src/main/jetty/static/apidocs/")
+			eachFile {println it.file}
+		}
+		println ""
+	}
+}
+
+task(syncDev) {
+	doLast {
+		println "Updating local dev sagetv frontend"
+		copy {
+			from ("build/generated/es6/")
+			into ("../sagetv-frontend/sagetv-ui/node_modules/sagetv-js-api/api/")
+			eachFile {println it.file}
+		}
+		println ""
+
+		println "Updating local dev sagex swagger definition"
+		copy {
+			from ("build/generated/openapi/")
+			into ("../../unRAID/mnt/user/apps/sagetv/server/jetty/static/apidocs/")
+			eachFile {println it.file}
+		}
+		println ""
+	}
+}
+
+
 all.finalizedBy(genSwaggerUI)
 
 defaultTasks 'all'

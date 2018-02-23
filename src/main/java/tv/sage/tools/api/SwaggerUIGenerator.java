@@ -214,31 +214,12 @@ public class SwaggerUIGenerator {
 
             o.addProperty("type", "object");
             for (APIMethod m : g.getMethods()) {
-                if (m.isCanSerialize()) {
+                if (m.isCanSerialize() && m.isExported() && m.isInstance()) {
 
                     String f = m.getSerializedField();
-                    if (m.getReturnType()!=null && "boolean".equals(m.getReturnType().getType().toLowerCase())) {
-                        f= "Is" + f;
-                    }
-                    if ("ID".equals(f)) {
-                        f = g.getForType() + f;
-                    }
-                    // Hack -- if we have circular refs,
-                    // swagger will not render the object type
-                    // so we are forcing ints for these refernces in the documentation
-                    if (g.getForType().equals(m.getReturnType().getType())) {
-                        // our method return type is a circular reference
-                        addProperty(o, f, "integer");
-                        continue;
-                    }
-                    if ("MediaFileForAiring".equals(m.getSerializedField())) {
-                        // our method return type is a circular reference
-                        addProperty(o, m.getSerializedField(), "integer");
-                        continue;
-                    }
 
                     if ("".equals(m.getSerializedField())) {
-                        addProperty(o, m.getSerializedField(), "#/definitions/"+m.getSerializedField());
+                        addProperty(o, m.getSerializedField(), "#/definitions/" + m.getSerializedField());
                     } else {
                         addProperty(o, f, getSwaggerType(m.getReturnType(), false));
                     }
@@ -254,68 +235,9 @@ public class SwaggerUIGenerator {
         definitions.add("MetadataProperties", o);
 
         o.addProperty("type", "object");
-        addProperty(o, "Title", "string");
-        addProperty(o, "EpisodeName", "string");
-        addProperty(o, "Genre", "array");
-        addProperty(o, "GenreID", "string");
-        addProperty(o, "Description", "string");
-        addProperty(o, "Year", "integer");
-        addProperty(o, "Language", "string");
-        addProperty(o, "Rated", "string");
-        addProperty(o, "ParentalRating", "string");
-        addProperty(o, "RunningTime", "string");
-        addProperty(o, "OriginalAirDate", "integer");
-        addProperty(o, "ExtendedRatings", "string");
-        addProperty(o, "Misc", "string");
-        addProperty(o, "PartNumber", "integer");
-        addProperty(o, "TotalParts", "integer");
-        addProperty(o, "HDTV", "boolean");
-        addProperty(o, "CC", "boolean");
-        addProperty(o, "Stereo", "boolean");
-        addProperty(o, "Subtitled", "boolean");
-        addProperty(o, "Premiere", "boolean");
-        addProperty(o, "SeasonPremiere", "boolean");
-        addProperty(o, "SeriesPremiere", "boolean");
-        addProperty(o, "ChannelPremiere", "boolean");
-        addProperty(o, "SeasonFinal", "boolean");
-        addProperty(o, "SeriesFinale", "boolean");
-        addProperty(o, "SAP", "boolean");
-        addProperty(o, "ExternalID", "string");
-        addProperty(o, "Width", "integer");
-        addProperty(o, "Height", "integer");
-        addProperty(o, "Track", "integer");
-        addProperty(o, "TotalTracks", "integer");
-        addProperty(o, "Comment", "string");
-        addProperty(o, "AiringTime", "date");
-        addProperty(o, "ThumbnailOffset", "integer");
-        addProperty(o, "ThumbnailSize", "integer");
-        addProperty(o, "ThumbnailDesc", "string");
-        addProperty(o, "Duration", "integer");
-        addProperty(o, "Picture.Resolution", "string");
-        addProperty(o, "MediaTitle", "string");
-        addProperty(o, "MediaType", "string");
-        addProperty(o, "SeasonNumber", "integer");
-        addProperty(o, "EpisodeNumber", "string");
-        addProperty(o, "IMDBID", "string");
-        addProperty(o, "DiscNumber", "string");
-        addProperty(o, "MediaProviderID", "string");
-        addProperty(o, "MediaProviderDataID", "string");
-        addProperty(o, "UserRating", "integer");
-        addProperty(o, "Fanart", "array");
-        addProperty(o, "TrailerUrl", "string");
-        addProperty(o, "SeriesInfoID", "integer");
-        addProperty(o, "EpisodeCount", "integer");
-        addProperty(o, "CollectionName", "string");
-        addProperty(o, "CollectionID", "integer");
-        addProperty(o, "CollectionOverview", "string");
-        addProperty(o, "DefaultPoster", "string");
-        addProperty(o, "DefaultBanner", "string");
-        addProperty(o, "DefaultBackground", "string");
-        addProperty(o, "ScrapedBy", "string");
-        addProperty(o, "ScrapedDate", "long");
-        addProperty(o, "TagLine", "string");
-        addProperty(o, "Quotes", "string");
-        addProperty(o, "Trivia", "string");
+        for (APIHelper.Property p: APIHelper.METADATA_PROPERTIES) {
+            addProperty(o, p.name, p.type);
+        }
     }
 
     private void generateApi(APIGroup api, JsonObject paths) {
@@ -466,7 +388,7 @@ public class SwaggerUIGenerator {
         if (properties.has(name)) {
             prop = properties.getAsJsonObject(name);
         } else {
-            if (type!=null && type.startsWith("#/")) {
+            if (type != null && type.startsWith("#/")) {
                 if ("MetadataProperties".equals(name)) {
                     // fix for sagex apis
                     name = "MediaFileMetadataProperties";
@@ -480,7 +402,7 @@ public class SwaggerUIGenerator {
             properties.add(name, prop);
         }
 
-        if (type!=null && type.startsWith("#/")) {
+        if (type != null && type.startsWith("#/")) {
         } else {
             prop.addProperty("type", type);
         }
