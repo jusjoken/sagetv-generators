@@ -48,7 +48,7 @@ public class APIASTGenerator {
 
     APIModel buildAPIs(File dir) throws FileNotFoundException {
         APIModel apiModel = new APIModel();
-        apiModel.setVersion("9.0");
+        apiModel.setVersion("9.2");
         List<APIGroup> apiGroups = apiModel.getGroups();
 
         File[] files = dir.listFiles(new FileFilter() {

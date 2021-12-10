@@ -41,7 +41,7 @@ public class SwaggerUIGenerator {
         swaggerOut.getParentFile().mkdirs();
         JsonObject o = new JsonObject();
 
-        o.addProperty("swagger", 3.0);
+        o.addProperty("swagger", "2.0");
         //o.addProperty("openapi", 3.0);
         o.addProperty("host", "localhost:8080");
         o.addProperty("basePath", "/sagex/api");
