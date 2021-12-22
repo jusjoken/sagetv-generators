@@ -43,13 +43,15 @@ public class SwaggerUIGenerator {
 
         o.addProperty("swagger", "2.0");
         //o.addProperty("openapi", 3.0);
-        o.addProperty("host", "localhost:8080");
-        o.addProperty("basePath", "/sagex/api");
 
+        o.addProperty("basePath", "/sagex/api");
+        /* Remove host and schemes as swagger will default to current host and scheme
+        o.addProperty("host", "localhost:8080");
         JsonArray schemes = new JsonArray();
         o.add("schemes", schemes);
         schemes.add("http");
         schemes.add("https");
+         */
 
         JsonArray produces = new JsonArray();
         o.add("produces", produces);
